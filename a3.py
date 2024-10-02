@@ -76,8 +76,7 @@ def title_by_year_range(matches: List[str]) -> List[str]:
     """
     result:List[str]=[]
     for i in movie_db:
-        for y in range(int(matches[0]),int(matches[1])):
-            if get_year(i)==y:
+        if get_year(i)>=int(matches[0]) and get_year(i)<=int(matches[1]):
                 result.append(get_title(i))
     return result
 
@@ -162,6 +161,7 @@ def actors_by_title(matches: List[str]) -> List[str]:
     for i in movie_db:
         if get_title(i)==matches[0]:
             return get_actors(i)
+    return []
 
 
 def year_by_title(matches: List[str]) -> List[int]:
@@ -189,7 +189,13 @@ def title_by_actor(matches: List[str]) -> List[str]:
     Returns:
         a list of movie titles that the actor acted in
     """
-    pass
+    result:List[str]=[]
+    for i in movie_db:
+        for y in get_actors(i):
+            if y==matches[0]:
+                result.append(get_title(i))
+    return result
+
 
 
 # dummy argument is ignored and doesn't matter
@@ -228,7 +234,13 @@ def search_pa_list(src: List[str]) -> List[str]:
         a list of answers. Will be ["I don't understand"] if it finds no matches and
         ["No answers"] if it finds a match but no answers
     """
-    pass
+    for i in pa_list:
+        if match(i[0],src):
+            ans=i[1](match(i[0],src))
+            if ans==[]:
+                return ["No answers"]
+            return ans
+    return ["I don't understand"]
 
 
 def query_loop() -> None:
@@ -253,7 +265,7 @@ def query_loop() -> None:
 # uncomment the following line once you've written all of your code and are ready to try
 # it out. Before running the following line, you should make sure that your code passes
 # the existing asserts.
-# query_loop()
+query_loop()
 
 if __name__ == "__main__":
     assert isinstance(title_by_year(["1974"]), list), "title_by_year not returning a list"
