@@ -196,7 +196,16 @@ def title_by_actor(matches: List[str]) -> List[str]:
                 result.append(get_title(i))
     return result
 
+def flippy(s: List[str]) -> List[str]:
+    """Returns input backwards
 
+    Args:
+        s - a list of 1 string to be flipped
+
+    Returns:
+        a list of 1 string, the backwards version
+    """
+    return [s[0][::-1]]
 
 # dummy argument is ignored and doesn't matter
 def bye_action(dummy: List[str]) -> None:
@@ -218,6 +227,7 @@ pa_list: List[Tuple[List[str], Callable[[List[str]], List[Any]]]] = [
     (str.split("who acted in %"), actors_by_title),
     (str.split("when was % made"), year_by_title),
     (str.split("in what movies did % appear"), title_by_actor),
+    (str.split("what is % backwards"), flippy),
     (["bye"], bye_action),
 ]
 
@@ -234,12 +244,12 @@ def search_pa_list(src: List[str]) -> List[str]:
         a list of answers. Will be ["I don't understand"] if it finds no matches and
         ["No answers"] if it finds a match but no answers
     """
+    if src==["bye"]:
+        return bye_action("waluigi")
     for i in pa_list:
         if match(i[0],src):
             ans=i[1](match(i[0],src))
-            if ans==[]:
-                return ["No answers"]
-            return ans
+            return ["No answers"] if ans==[] else ans
     return ["I don't understand"]
 
 
@@ -312,6 +322,11 @@ if __name__ == "__main__":
     assert sorted(title_by_actor(["orson welles"])) == sorted(
         ["citizen kane", "othello"]
     ), "failed title_by_actor test"
+
+    assert sorted(search_pa_list(["what", "is","spongebob","squarepants","backwards"])) == sorted(
+        ["stnaperauqs bobegnops"]
+    ), "WRATH OF STNAPERAUQS BOBEGNOPS"
+
     assert sorted(search_pa_list(["hi", "there"])) == sorted(
         ["I don't understand"]
     ), "failed search_pa_list test 1"
